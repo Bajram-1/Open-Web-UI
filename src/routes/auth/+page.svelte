@@ -143,9 +143,9 @@
 			const isDarkMode = document.documentElement.classList.contains('dark');
 			if (isDarkMode) {
 				const darkImage = new Image();
-				darkImage.src = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
+				darkImage.src = `${WEBUI_BASE_URL}/static/qendra-logo.svg`;
 				darkImage.onload = () => {
-					logo.src = `${WEBUI_BASE_URL}/static/favicon-dark.png`;
+					logo.src = `${WEBUI_BASE_URL}/static/qendra-logo.svg`;
 					logo.style.filter = '';
 				};
 				darkImage.onerror = () => {
@@ -189,7 +189,7 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap"
+		href="https://fonts.googleapis.com/css2?family=inter:wght@400;500;600;700;800&family=jetbrains+mono:wght@400;500;700&display=swap"
 		rel="stylesheet"
 	/>
 </svelte:head>
@@ -203,6 +203,20 @@
 			linear-gradient(135deg, #050507 0%, #0b0b10 45%, #060608 100%);
 		color: #f5f5f5;
 		font-family: 'Inter', sans-serif;
+	}
+
+	.qendra-logo {
+		width: 300px !important;
+		height: 300px !important;
+		min-width: 130px !important;
+		min-height: 130px !important;
+		object-fit: contain;
+		border-radius: 28px;
+		padding: 10px;
+		backdrop-filter: blur(14px);
+		transition:
+			transform 0.25s ease,
+			box-shadow 0.25s ease;
 	}
 
 	:global(*) {
@@ -314,34 +328,42 @@
 	.left-top {
 		display: flex;
 		align-items: center;
-		gap: 14px;
+		flex-direction: column;
+		gap: 60px;
 	}
 
 	.logo-chip {
-		width: 64px;
-		height: 64px;
-		border-radius: 18px;
+		width: 200px;
+		height: 200px;
+		border-radius: 32px;
+
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		border: 1px solid rgba(239, 68, 68, 0.28);
-		background: linear-gradient(135deg, rgba(220, 38, 38, 0.22), rgba(255, 255, 255, 0.04));
-		box-shadow: 0 10px 32px rgba(220, 38, 38, 0.18);
-		overflow: hidden;
+
+		overflow: visible;
 	}
 
 	.logo-chip img {
-		width: 40px;
-		height: 40px;
-		border-radius: 999px;
+		border-radius: 24px;
 	}
-
 	.left-brand h1 {
 		margin: 0;
-		font-size: 1.15rem;
-		font-weight: 800;
-		letter-spacing: 0.04em;
-		color: #fafafa;
+
+		font-size: 1.6rem;
+		font-weight: 900;
+		;
+
+		letter-spacing: 0.08em;
+		text-align: center;
+		
+		color: #ffffff;
+
+		line-height: 1;
+
+		text-shadow:
+			0 0 18px rgba(239, 68, 68, 0.18),
+			0 0 32px rgba(239, 68, 68, 0.12);
 	}
 
 	.left-brand p {
@@ -371,72 +393,6 @@
 		text-transform: uppercase;
 		margin-bottom: 18px;
 	}
-
-	.hero-title {
-		margin: 0;
-		font-size: clamp(2rem, 3vw, 3.4rem);
-		line-height: 1.02;
-		font-weight: 800;
-		letter-spacing: -0.03em;
-		color: #fafafa;
-	}
-
-	.hero-title span {
-		color: #f87171;
-		text-shadow: 0 0 28px rgba(239, 68, 68, 0.18);
-	}
-
-	.hero-desc {
-		margin: 18px 0 0;
-		max-width: 430px;
-		font-size: 0.98rem;
-		line-height: 1.75;
-		color: #b4b4bc;
-	}
-
-	.info-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 14px;
-		margin-top: 28px;
-	}
-
-	.info-card {
-		padding: 14px 14px 12px;
-		border-radius: 18px;
-		background: rgba(255, 255, 255, 0.03);
-		border: 1px solid rgba(255, 255, 255, 0.06);
-		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
-	}
-
-	.info-card strong {
-		display: block;
-		font-size: 0.76rem;
-		font-weight: 800;
-		color: #f4f4f5;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		margin-bottom: 6px;
-	}
-
-	.info-card span {
-		font-size: 0.84rem;
-		line-height: 1.5;
-		color: #a1a1aa;
-	}
-
-	.left-footer {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 16px;
-		padding-top: 18px;
-		margin-top: 24px;
-		border-top: 1px solid rgba(255, 255, 255, 0.06);
-		font-size: 0.82rem;
-		color: #71717a;
-	}
-
 	.right-panel {
 		padding: 36px;
 		display: flex;
@@ -726,29 +682,8 @@
 
 	.ldap-toggle,
 	.marked,
-	.toggle-mode {
-		margin-top: 16px;
-		text-align: center;
-	}
-
 	.ldap-toggle button,
-	.toggle-mode button,
-	.toggle-mode a {
-		background: transparent;
-		border: none;
-		padding: 0;
-		font-size: 0.82rem;
-		font-weight: 600;
-		color: #9ca3af;
-		cursor: pointer;
-	}
-
 	.ldap-toggle button:hover,
-	.toggle-mode button:hover,
-	.toggle-mode a:hover {
-		color: #f3f4f6;
-	}
-
 	.signing-in {
 		display: flex;
 		align-items: center;
@@ -782,14 +717,6 @@
 		font-size: 1.1rem;
 		font-weight: 800;
 		color: #fafafa;
-	}
-
-	.mobile-brand p {
-		margin: 4px 0 0;
-		font-size: 0.78rem;
-		color: #8b8b95;
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
 	}
 
 	@media (max-width: 920px) {
@@ -855,49 +782,18 @@
 		<div class="auth-shell">
 			<div class="left-panel">
 				<div class="left-top">
+					<div class="left-brand">
+						<h1>{$WEBUI_NAME}</h1>
+					</div>
 					<div class="logo-chip">
 						<img
 							id="logo"
 							crossorigin="anonymous"
-							src="{WEBUI_BASE_URL}/static/favicon.png"
+							src="{WEBUI_BASE_URL}/static/qendra-logo.svg"
 							alt="{$WEBUI_NAME}"
+							class="qendra-logo"
 						/>
 					</div>
-					<div class="left-brand">
-						<h1>{$WEBUI_NAME}</h1>
-						<p>Secure AI Workspace</p>
-					</div>
-				</div>
-
-				<div class="hero-copy">
-					<div class="hero-badge">Secure Access Layer</div>
-					<h2 class="hero-title">
-						A smarter gateway to your <span>AI workspace</span>
-					</h2>
-					<p class="hero-desc">
-						Access conversations, models, and internal tools through a cleaner,
-						more secure authentication experience designed for focused teams.
-					</p>
-
-					<div class="info-grid">
-						<div class="info-card">
-							<strong>Protected</strong>
-							<span>Controlled access for authorized users and internal environments.</span>
-						</div>
-						<div class="info-card">
-							<strong>Fast</strong>
-							<span>Minimal friction sign-in flow with support for email, LDAP, and SSO.</span>
-						</div>
-						<div class="info-card">
-							<strong>Unified</strong>
-							<span>One modern entry point to Open WebUI and your integrated services.</span>
-						</div>
-					</div>
-				</div>
-
-				<div class="left-footer">
-					<span>System Version 2.0.0</span>
-					<span>{$WEBUI_NAME} · Secure Portal</span>
 				</div>
 			</div>
 
@@ -911,16 +807,15 @@
 					{:else}
 						<div class="mobile-brand">
 							<div class="mobile-brand-top">
-								<div class="logo-chip" style="width:56px;height:56px;">
+								<div class="logo-chip" style="width:140px;height:140px;">
 									<img
 										crossorigin="anonymous"
-										src="{WEBUI_BASE_URL}/static/favicon.png"
+										src="{WEBUI_BASE_URL}/static/qendra-logo.svg"
 										alt="{$WEBUI_NAME}"
 									/>
 								</div>
 								<div>
 									<h2>{$WEBUI_NAME}</h2>
-									<p>Secure AI Workspace</p>
 								</div>
 							</div>
 						</div>

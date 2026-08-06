@@ -5,7 +5,7 @@
 	export let src = `${WEBUI_BASE_URL}/static/favicon.png`;
 </script>
 
-<img
+<!-- <img
 	aria-hidden="true"
 	src={src === ''
 		? `${WEBUI_BASE_URL}/static/favicon.png`
@@ -18,4 +18,4 @@
 	class=" {className} object-cover rounded-full"
 	alt="profile"
 	draggable="false"
-/>
+/> -->

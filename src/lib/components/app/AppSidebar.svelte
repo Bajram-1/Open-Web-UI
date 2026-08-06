@@ -20,7 +20,7 @@
 		<Tooltip content="Home" placement="right">
 			<button
 				aria-label="Home"
-				class=" cursor-pointer {selected === 'home' ? 'rounded-2xl' : 'rounded-full'}"
+				class="cursor-pointer bg-transparent"
 				on:click={() => {
 					selected = 'home';
 
@@ -29,12 +29,7 @@
 					}
 				}}
 			>
-				<img
-					src="{WEBUI_BASE_URL}/static/splash.png"
-					class="size-11 dark:invert p-0.5"
-					alt="logo"
-					draggable="false"
-				/>
+				<span class="size-11 dark:invert p-0.5 flex items-center justify-center text-gray-600 dark:text-gray-400">🏠</span>
 			</button>
 		</Tooltip>
 	</div>
@@ -54,12 +49,7 @@
 				selected = '';
 			}}
 		>
-			<img
-				src="{WEBUI_BASE_URL}/static/favicon.png"
-				class="size-10 {selected === '' ? 'rounded-2xl' : 'rounded-full'}"
-				alt="logo"
-				draggable="false"
-			/>
+			<span class="size-10 flex items-center justify-center text-gray-600 dark:text-gray-400">💬</span>
 		</button>
 	</div>
 

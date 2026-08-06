@@ -389,14 +389,6 @@
 								<td class="px-3 py-1 text-gray-400">{idx + 1}</td>
 								<td class="px-3 py-1 font-medium text-gray-900 dark:text-white">
 									<div class="flex items-center gap-2">
-										<img
-											src="{WEBUI_API_BASE_URL}/models/model/profile/image?id={model.model_id}"
-											alt={model.name}
-											class="size-5 rounded-full object-cover shrink-0"
-											on:error={(e) => {
-												e.target.src = '/favicon.png';
-											}}
-										/>
 										<span class="truncate max-w-[150px]">{model.name}</span>
 									</div>
 								</td>

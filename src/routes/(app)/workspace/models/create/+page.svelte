@@ -28,22 +28,22 @@
 			return;
 		}
 
-		if (modelInfo) {
-			const res = await createNewModel(localStorage.token, {
-				...modelInfo,
-				meta: {
-					...modelInfo.meta,
-					profile_image_url:
-						modelInfo.meta.profile_image_url ?? `${WEBUI_BASE_URL}/static/favicon.png`,
-					suggestion_prompts: modelInfo.meta.suggestion_prompts
-						? modelInfo.meta.suggestion_prompts.filter((prompt) => prompt.content !== '')
-						: null
-				},
-				params: { ...modelInfo.params }
-			}).catch((error) => {
-				toast.error(`${error}`);
-				return null;
-			});
+		// if (modelInfo) {
+		// 	const res = await createNewModel(localStorage.token, {
+		// 		...modelInfo,
+		// 		meta: {
+		// 			...modelInfo.meta,
+		// 			profile_image_url:
+		// 				modelInfo.meta.profile_image_url ?? `${WEBUI_BASE_URL}/static/favicon.png`,
+		// 			suggestion_prompts: modelInfo.meta.suggestion_prompts
+		// 				? modelInfo.meta.suggestion_prompts.filter((prompt) => prompt.content !== '')
+		// 				: null
+		// 		},
+		// 		params: { ...modelInfo.params }
+		// 	}).catch((error) => {
+		// 		toast.error(`${error}`);
+		// 		return null;
+		// 	});
 
 			if (res) {
 				await models.set(
@@ -56,7 +56,6 @@
 				await goto('/workspace/models');
 			}
 		}
-	};
 
 	let model = null;
 

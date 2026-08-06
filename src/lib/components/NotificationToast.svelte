@@ -108,10 +108,6 @@
 		<XMark className="size-3" />
 	</button>
 
-	<div class="shrink-0 self-top -translate-y-0.5">
-		<img src="{WEBUI_BASE_URL}/static/favicon.png" alt="favicon" class="size-6 rounded-full" />
-	</div>
-
 	<div>
 		{#if title}
 			<div class=" text-[13px] font-medium mb-0.5 line-clamp-1">{title}</div>

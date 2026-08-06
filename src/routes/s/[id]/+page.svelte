@@ -154,14 +154,14 @@
 		class="h-screen max-h-[100dvh] w-full flex flex-col text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-900"
 	>
 		<div class="flex flex-col flex-auto justify-center relative">
-			<div class=" flex flex-col w-full flex-auto overflow-auto h-0" id="messages-container">
+			<div class="flex flex-col w-full flex-auto overflow-auto h-0" id="messages-container">
 				<div
 					class="pt-5 px-2 w-full {($settings?.widescreenMode ?? null)
 						? 'max-w-full'
 						: 'max-w-5xl'} mx-auto"
 				>
 					<div class="px-3">
-						<h1 class=" text-2xl font-medium line-clamp-1 m-0">
+						<h1 class="text-lg font-medium line-clamp-1 m-0">
 							{title}
 						</h1>
 

@@ -69,20 +69,20 @@
 	}
 
 	let system = '';
-	let info = {
-		id: '',
-		base_model_id: null,
-		name: '',
-		meta: {
-			profile_image_url: `${WEBUI_BASE_URL}/static/favicon.png`,
-			description: '',
-			suggestion_prompts: null,
-			tags: []
-		},
-		params: {
-			system: ''
-		}
-	};
+	// let info = {
+	// 	id: '',
+	// 	base_model_id: null,
+	// 	name: '',
+	// 	meta: {
+	// 		profile_image_url: `${WEBUI_BASE_URL}/static/favicon.png`,
+	// 		description: '',
+	// 		suggestion_prompts: null,
+	// 		tags: []
+	// 	},
+	// 	params: {
+	// 		system: ''
+	// 	}
+	// };
 
 	let params = {
 		system: ''

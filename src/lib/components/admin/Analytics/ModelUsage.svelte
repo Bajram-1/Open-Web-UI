@@ -142,14 +142,6 @@
 						</td>
 						<td class="px-3 py-1.5">
 							<div class="flex items-center gap-2">
-								<img
-									src="{WEBUI_API_BASE_URL}/models/model/profile/image?id={model.model_id}"
-									alt={model.name}
-									class="size-5 rounded-full object-cover shrink-0"
-									on:error={(e) => {
-										e.target.src = '/favicon.png';
-									}}
-								/>
 								<span class="font-medium text-gray-800 dark:text-gray-200">{model.name}</span>
 							</div>
 						</td>

@@ -446,14 +446,14 @@
 						});
 					}
 
-					if ($isLastActiveTab) {
-						if ($settings?.notificationEnabled ?? false) {
-							new Notification(`${displayTitle} • Open WebUI`, {
-								body: content,
-								icon: `${WEBUI_BASE_URL}/static/favicon.png`
-							});
-						}
-					}
+					// if ($isLastActiveTab) {
+					// 	if ($settings?.notificationEnabled ?? false) {
+					// 		new Notification(`${displayTitle} • Open WebUI`, {
+					// 			body: content,
+					// 			icon: `${WEBUI_BASE_URL}/static/favicon.png`
+					// 		});
+					// 	}
+					// }
 
 					toast.custom(NotificationToast, {
 						componentProps: {
@@ -957,7 +957,7 @@
 
 <svelte:head>
 	<title>{$WEBUI_NAME}</title>
-	<link crossorigin="anonymous" rel="icon" href="{WEBUI_BASE_URL}/static/favicon.png" />
+	<!-- <link crossorigin="anonymous" rel="icon" href="{WEBUI_BASE_URL}/static/favicon.png" /> -->
 
 	<meta name="apple-mobile-web-app-title" content={$WEBUI_NAME} />
 	<meta name="description" content={$WEBUI_NAME} />

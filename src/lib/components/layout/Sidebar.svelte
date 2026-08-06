@@ -704,12 +704,6 @@
 						aria-label={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
 					>
 						<div class=" self-center flex items-center justify-center size-9">
-							<img
-								src="{WEBUI_BASE_URL}/static/favicon.png"
-								class="sidebar-new-chat-icon size-6 rounded-full group-hover:hidden"
-								alt=""
-							/>
-
 							<Sidebar className="size-5 hidden group-hover:flex" />
 						</div>
 					</button>
@@ -898,12 +892,6 @@
 					draggable="false"
 					on:click={newChatHandler}
 				>
-					<img
-						crossorigin="anonymous"
-						src="{WEBUI_BASE_URL}/static/favicon.png"
-						class="sidebar-new-chat-icon size-6 rounded-full"
-						alt=""
-					/>
 				</a>
 
 				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>

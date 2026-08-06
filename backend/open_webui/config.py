@@ -1104,7 +1104,14 @@ OLLAMA_BASE_URLS = PersistentConfig(
 OLLAMA_API_CONFIGS = PersistentConfig(
     "OLLAMA_API_CONFIGS",
     "ollama.api_configs",
-    {},
+    {
+        "farsh-rag": {
+            "base_url": "http://localhost:5000",
+            "api_key": "",
+            "model": "farsh-rag",
+            "description": "FARSH RAG Assistant"
+        }
+    },
 )
 
 ####################################

@@ -2143,5 +2143,12 @@
 	"Your usage stats have been successfully synced.": "Statistikat e përdorimit u sinkronizuan me sukses.",
 	"YouTube": "YouTube",
 	"Youtube Language": "Gjuha e YouTube",
-	"Youtube Proxy URL": "URL e proxy për YouTube"
+	"Youtube Proxy URL": "URL e proxy për YouTube",
+	"Authorized Access": "Qasje e autorizuar",
+	"Welcome Back": "Mirë se erdhët",
+	"Set up your secure account to access the platform.": "Krijoni llogarinë tuaj të sigurt për të hyrë në platformë.",
+	"Authenticate with your organization credentials.": "Autentifikohuni me kredencialet e organizatës suaj.",
+	"Sign in to continue to your workspace.": "Hyni për të vazhduar në hapësirën tuaj të punës.",
+	"SIGN IN": "HYR",
+	"SIGN UP": "REGJISTROHU"
 }
