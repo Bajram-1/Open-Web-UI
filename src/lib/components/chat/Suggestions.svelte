@@ -64,7 +64,7 @@
 	}
 </script>
 
-<div class="mb-1 flex gap-1 text-xs font-medium items-center text-gray-600 dark:text-gray-400">
+<div class="mb-3 flex gap-1 text-xs font-semibold items-center text-[#66722d] dark:text-gray-400 uppercase tracking-wider">
 	{#if filteredPrompts.length > 0}
 		<Bolt />
 		{$i18n.t('Suggested')}
@@ -81,15 +81,15 @@
 	{/if}
 </div>
 
-<div class="h-40 w-full">
+<div class="w-full">
 	{#if filteredPrompts.length > 0}
-		<div role="list" class="max-h-40 overflow-auto scrollbar-none items-start {className}">
+		<div role="list" class="official-suggestions overflow-hidden items-stretch {className}">
 			{#each filteredPrompts as prompt, idx (prompt.id || `${prompt.content}-${idx}`)}
 				<!-- svelte-ignore a11y-no-interactive-element-to-noninteractive-role -->
 				<button
 					role="listitem"
-					class="waterfall flex flex-col flex-1 shrink-0 w-full justify-between
-				       px-3 py-2 rounded-xl bg-transparent hover:bg-black/5
+					class="waterfall official-suggestion-card flex flex-col flex-1 shrink-0 w-full justify-between
+				       px-5 py-4 rounded-2xl bg-white hover:bg-[#fafbf6]
 				       dark:hover:bg-white/5 transition group"
 					style="animation-delay: {idx * 60}ms"
 					on:click={() => onSelect({ type: 'prompt', data: prompt.content })}
@@ -140,5 +140,31 @@
 		animation-duration: 200ms;
 		animation-fill-mode: forwards;
 		animation-timing-function: ease;
+	}
+
+	.official-suggestions {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.75rem;
+	}
+
+	.official-suggestion-card {
+		min-height: 7.25rem;
+		border: 1px solid #e4e4e7;
+		border-bottom: 2px solid #909f3e;
+		box-shadow: 0 12px 28px rgba(24, 24, 27, 0.07);
+	}
+
+	@media (max-width: 760px) {
+		.official-suggestions {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-height: 820px) {
+		.official-suggestion-card {
+			min-height: 6.25rem;
+			padding: 0.85rem 1rem;
+		}
 	}
 </style>

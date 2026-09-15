@@ -65,6 +65,24 @@
 	let models = [];
 	let selectedModelIdx = 0;
 
+	const officialSuggestions = [
+		{
+			id: 'sar-terms',
+			title: ['Termat themelorë të SAR', 'Njihuni me terminologjinë kryesore të kërkim-shpëtimit.'],
+			content: 'Shpjego termat themelorë të SAR dhe rolin e tyre në një operacion kërkim-shpëtimi.'
+		},
+		{
+			id: 'sar-phases',
+			title: ['Fazat e emergjencës', 'Shpjegoni fazat e një operacioni kërkim-shpëtimi.'],
+			content: 'Cilat janë fazat e emergjencës INCERFA, ALERFA dhe DETRESFA dhe kur shpallet secila?'
+		},
+		{
+			id: 'sar-coordination',
+			title: ['Koordinimi i misioneve', 'Udhëzim për koordinimin ndërmjet njësive.'],
+			content: 'Si koordinohen SC-ja, SMC-ja, OSC-ja dhe njësitë SRU gjatë një misioni SAR?'
+		}
+	];
+
 	$: if (selectedModels.length > 0) {
 		selectedModelIdx = models.length - 1;
 	}
@@ -72,7 +90,7 @@
 	$: models = selectedModels.map((id) => $_models.find((m) => m.id === id));
 </script>
 
-<div class="m-auto w-full max-w-6xl px-2 @2xl:px-20 translate-y-6 py-24 text-center">
+<div class="official-home m-auto w-full max-w-5xl px-4 lg:px-8 py-12 text-center">
 	{#if $temporaryChatEnabled}
 		<Tooltip
 			content={$i18n.t("This chat won't appear in history and your messages will not be saved.")}
@@ -104,6 +122,7 @@
 					}}
 				/>
 			{:else}
+				<div class="official-home-kicker">PLATFORMA ZYRTARE</div>
 				<div class="flex flex-row justify-center gap-3 @sm:gap-3.5 w-fit px-5 max-w-xl">
 					<div class="flex shrink-0 justify-center">
 						<div class="flex -space-x-4 mb-0.5" in:fade={{ duration: 100 }}>
@@ -139,8 +158,8 @@
 								placement="top"
 								className=" flex items-center "
 							>
-								<span class="line-clamp-1">
-									{models[selectedModelIdx]?.name}
+								<span class="line-clamp-2 official-home-title">
+									Asistenti Digjital i Forcave të Armatosura të Shqipërisë
 								</span>
 							</Tooltip>
 						{:else}
@@ -231,13 +250,10 @@
 			<FolderPlaceholder folder={$selectedFolder} />
 		</div>
 	{:else}
-		<div class="mx-auto max-w-2xl font-primary mt-2" in:fade={{ duration: 200, delay: 200 }}>
+		<div class="mx-auto max-w-4xl font-primary mt-4" in:fade={{ duration: 200, delay: 200 }}>
 			<div class="mx-5">
 				<Suggestions
-					suggestionPrompts={atSelectedModel?.info?.meta?.suggestion_prompts ??
-						models[selectedModelIdx]?.info?.meta?.suggestion_prompts ??
-						$config?.default_prompt_suggestions ??
-						[]}
+					suggestionPrompts={officialSuggestions}
 					inputValue={prompt}
 					{onSelect}
 				/>
@@ -245,3 +261,55 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	.official-home::before {
+		content: '';
+		position: absolute;
+		right: -4rem;
+		bottom: -5rem;
+		width: 24rem;
+		height: 24rem;
+		border: 2.5rem solid rgba(143, 157, 55, 0.055);
+		transform: rotate(45deg);
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	.official-home {
+		position: relative;
+		overflow: hidden;
+		max-width: 100%;
+	}
+
+	.official-home-kicker {
+		margin-bottom: 1rem;
+		color: #dc2626;
+		font-size: 0.72rem;
+		font-weight: 800;
+		letter-spacing: 0.35em;
+	}
+
+	.official-home-title {
+		font-weight: 750;
+		line-height: 1.15;
+		max-width: 42rem;
+		font-size: clamp(1.65rem, 3vw, 2.35rem);
+	}
+
+	:global(.official-home form) {
+		border-bottom: 2px solid #8a9838 !important;
+		box-shadow: 0 18px 45px rgba(24, 24, 27, 0.1) !important;
+	}
+
+	@media (max-height: 820px) {
+		.official-home {
+			padding-top: 1.5rem;
+			padding-bottom: 1.5rem;
+		}
+
+		.official-home-kicker {
+			margin-bottom: 0.5rem;
+		}
+	}
+</style>

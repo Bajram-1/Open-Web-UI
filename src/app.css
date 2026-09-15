@@ -59,6 +59,44 @@ html {
 	min-height: calc(20px * var(--app-text-scale, 1));
 }
 
+#sidebar[data-state='true'] #sidebar-chat-item.sidebar-chat-selected {
+	background: linear-gradient(90deg, rgba(143, 158, 53, 0.38), rgba(143, 158, 53, 0.16)) !important;
+	box-shadow: inset 3px 0 0 #a2b247 !important;
+	color: #fff !important;
+}
+
+#sidebar[data-state='true'] #sidebar-chat-group:hover #sidebar-chat-item.sidebar-chat-selected,
+#sidebar[data-state='true'] #sidebar-chat-item.sidebar-chat-selected:hover {
+	background: linear-gradient(90deg, rgba(143, 158, 53, 0.5), rgba(143, 158, 53, 0.24)) !important;
+	box-shadow: inset 3px 0 0 #aebe47 !important;
+	color: #fff !important;
+}
+
+#sidebar[data-state='true'] #sidebar-chat-item-menu.sidebar-chat-menu-selected {
+	background: linear-gradient(to left, rgba(76, 85, 30, 0.98) 0%, rgba(76, 85, 30, 0.92) 72%, transparent 100%) !important;
+	color: #fff !important;
+}
+
+#sidebar[data-state='true'] #sidebar-chat-group:hover #sidebar-chat-item.sidebar-chat-idle {
+	background: rgba(143, 158, 53, 0.18) !important;
+	color: #fff !important;
+}
+
+#sidebar[data-state='true'] #sidebar-chat-item-menu.sidebar-chat-menu-idle {
+	background: linear-gradient(
+		to left,
+		rgba(45, 51, 25, 0.98) 0%,
+		rgba(45, 51, 25, 0.9) 72%,
+		transparent 100%
+	) !important;
+	color: #fff !important;
+}
+
+#sidebar[data-state='true'] #sidebar-chat-item-menu button:hover {
+	background-color: rgba(143, 158, 53, 0.28) !important;
+	color: #fff !important;
+}
+
 code {
 	/* white-space-collapse: preserve !important; */
 	overflow-x: auto;

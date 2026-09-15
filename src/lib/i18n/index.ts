@@ -38,10 +38,11 @@ const createIsLoadingStore = (i18n: i18nType) => {
 };
 
 export const initI18n = (defaultLocale?: string | undefined) => {
-	const detectionOrder = defaultLocale
-		? ['querystring', 'localStorage']
-		: ['querystring', 'localStorage', 'navigator'];
-	const fallbackDefaultLocale = defaultLocale ? [defaultLocale] : ['en-US'];
+	// This deployment is Albanian-first. Do not let a stale browser or
+	// localStorage preference silently switch the interface back to English.
+	// An explicit `?lang=` remains available for intentional overrides.
+	const detectionOrder = ['querystring'];
+	const fallbackDefaultLocale = [defaultLocale || 'sq-AL'];
 
 	const loadResource = (language: string, namespace: string) =>
 		import(`./locales/${language}/${namespace}.json`);

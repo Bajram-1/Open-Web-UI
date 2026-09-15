@@ -6,6 +6,11 @@ services:
     tty: true
     volumes:
       - ollama-data:/root/.ollama
+    command: >
+      sh -c "ollama serve &
+             sleep 10 &&
+             ollama pull ai-digital-assistant-of-albanian-armed-forces &&
+             wait"
 
   open-webui:
     build:

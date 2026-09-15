@@ -1636,6 +1636,17 @@ async def get_models(
 
     models = get_filtered_models(models, user)
 
+    # Deployment-level allowlist for the user-facing model selector. The
+    # underlying provider models remain installed and available to internal
+    # pipelines/RAG, but users only see the approved assistant models.
+    visible_model_ids = {
+        model_id.strip()
+        for model_id in os.environ.get("VISIBLE_MODEL_IDS", "").split(",")
+        if model_id.strip()
+    }
+    if visible_model_ids:
+        models = [model for model in models if model.get("id") in visible_model_ids]
+
     log.debug(
         f"/api/models returned filtered models accessible to the user: {json.dumps([model.get('id') for model in models])}"
     )

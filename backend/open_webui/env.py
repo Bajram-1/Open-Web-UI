@@ -132,9 +132,10 @@ if "cuda_error" in locals():
 
 SRC_LOG_LEVELS = {}  # Legacy variable, do not remove
 
-WEBUI_NAME = os.environ.get("WEBUI_NAME", "AI Digital Assistant of Albanian Armed Forces") 
-if WEBUI_NAME != "AI Digital Assistant of Albanian Armed Forces":
-    WEBUI_NAME += " (AI Digital Assistant of Albanian Armed Forces)"
+DEFAULT_ALBANIAN_WEBUI_NAME = (
+    "Asistenti Digjital i Forcave të Armatosura të Shqipërisë"
+)
+WEBUI_NAME = os.environ.get("WEBUI_NAME", DEFAULT_ALBANIAN_WEBUI_NAME)
 
 WEBUI_FAVICON_URL = "https://openwebui.com/favicon.png"
 

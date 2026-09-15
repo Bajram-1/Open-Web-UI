@@ -383,8 +383,9 @@
 		selectedChatId = null;
 	};
 
-	const MIN_WIDTH = 220;
-	const MAX_WIDTH = 480;
+	const MIN_WIDTH = 320;
+	const MAX_WIDTH = 320;
+	const COMFORTABLE_WIDTH = 320;
 
 	let isResizing = false;
 
@@ -419,10 +420,10 @@
 
 	onMount(() => {
 		try {
-			const width = Number(localStorage.getItem('sidebarWidth'));
-			if (!Number.isNaN(width) && width >= MIN_WIDTH && width <= MAX_WIDTH) {
-				sidebarWidth.set(width);
-			}
+			// The branded sidebar has a fixed visual width. Keep the layout store in
+			// sync so the chat navbar never renders underneath it.
+			sidebarWidth.set(COMFORTABLE_WIDTH);
+			localStorage.setItem('sidebarWidth', String(COMFORTABLE_WIDTH));
 		} catch {}
 
 		document.documentElement.style.setProperty('--sidebar-width', `${$sidebarWidth}px`);
@@ -683,8 +684,9 @@
 
 {#if !$mobile && !$showSidebar}
 	<div
-		class=" pt-[7px] pb-2 px-2 flex flex-col justify-between text-black dark:text-white hover:bg-gray-50/30 dark:hover:bg-gray-950/30 h-full z-10 transition-all border-e-[0.5px] border-gray-50 dark:border-gray-850/30"
+		class="collapsed-sidebar pt-[7px] pb-2 px-2 flex flex-col justify-between h-full z-10 transition-all"
 		id="sidebar"
+		data-state="false"
 	>
 		<button
 			class="flex flex-col flex-1 {isWindows ? 'cursor-pointer' : 'cursor-[e-resize]'}"
@@ -704,7 +706,7 @@
 						aria-label={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
 					>
 						<div class=" self-center flex items-center justify-center size-9">
-							<Sidebar className="size-5 hidden group-hover:flex" />
+							<Sidebar className="size-5 flex" />
 						</div>
 					</button>
 				</Tooltip>
@@ -870,7 +872,7 @@
 		bind:this={navElement}
 		id="sidebar"
 		class="h-screen max-h-[100dvh] min-h-screen select-none {$showSidebar
-			? `${$mobile ? 'bg-gray-50 dark:bg-gray-950' : 'bg-gray-50/70 dark:bg-gray-950/70'} z-50`
+			? 'bg-black z-50'
 			: ' bg-transparent z-0 '} {$isApp
 			? `ml-[4.5rem] md:ml-0 `
 			: ' transition-all duration-300 '} shrink-0 text-gray-900 dark:text-gray-200 text-sm fixed top-0 left-0 overflow-x-hidden
@@ -879,7 +881,7 @@
 		data-state={$showSidebar}
 	>
 		<div
-			class=" my-auto flex flex-col justify-between h-screen max-h-[100dvh] w-[var(--sidebar-width)] overflow-x-hidden scrollbar-hidden z-50 {$showSidebar
+			class="my-auto flex min-h-0 flex-col h-screen max-h-[100dvh] w-[var(--sidebar-width)] overflow-hidden scrollbar-hidden z-50 {$showSidebar
 				? ''
 				: 'invisible'}"
 		>
@@ -887,11 +889,15 @@
 				class="sidebar px-[0.5625rem] pt-2 pb-1.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 sticky top-0 z-10 -mb-3"
 			>
 				<a
-					class="flex items-center rounded-xl size-8.5 h-full justify-center hover:bg-gray-100/50 dark:hover:bg-gray-850/50 transition no-drag-region"
+					class="sidebar-brand-link flex items-center rounded-xl size-8.5 h-full justify-center hover:bg-gray-100/50 dark:hover:bg-gray-850/50 transition no-drag-region"
 					href="/"
 					draggable="false"
 					on:click={newChatHandler}
 				>
+					<svg class="sidebar-brand-mark" viewBox="0 0 34 42" aria-hidden="true">
+						<path d="M4 8 17 20 30 7v7L17 27 4 15Z" fill="#9dac3f" />
+						<path d="M4 19 17 31 30 18v7L17 38 4 26Z" fill="#667329" />
+					</svg>
 				</a>
 
 				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
@@ -929,7 +935,7 @@
 			</div>
 
 			<div
-				class="relative flex flex-col flex-1 overflow-y-auto scrollbar-hidden pt-3 pb-3"
+				class="relative flex min-h-0 flex-col flex-1 overflow-y-auto overflow-x-hidden scrollbar-hidden pt-3 pb-3"
 				on:scroll={(e) => {
 					if (e.target.scrollTop === 0) {
 						scrollTop = 0;
@@ -1376,7 +1382,7 @@
 				</Folder>
 			</div>
 
-			<div class="px-1.5 pt-1.5 pb-2 sticky bottom-0 z-10 -mt-3 sidebar">
+			<div class="relative shrink-0 px-1.5 pt-1.5 pb-2 z-20 sidebar">
 				<div
 					class=" sidebar-bg-gradient-to-t bg-linear-to-t from-gray-50 dark:from-gray-950 to-transparent from-50% pointer-events-none absolute inset-0 -z-10 -mt-6"
 				></div>
@@ -1438,3 +1444,176 @@
 		</div>
 	{/if}
 {/if}
+
+<style>
+	:global(#sidebar[data-state='false']) {
+		width: 64px !important;
+		min-width: 64px !important;
+		background: linear-gradient(180deg, #101313 0%, #171b1a 100%) !important;
+		border-left: 6px solid #8f9e35 !important;
+		border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+		color: #ffffff !important;
+		box-sizing: border-box;
+	}
+
+	:global(#sidebar[data-state='false'] svg) {
+		color: #ffffff !important;
+		stroke: currentColor;
+	}
+
+	:global(#sidebar[data-state='false'] a:hover),
+	:global(#sidebar[data-state='false'] button:hover) {
+		background-color: rgba(143, 158, 53, 0.2) !important;
+	}
+
+	:global(#sidebar[data-state='false'] img) {
+		outline: 2px solid rgba(143, 158, 53, 0.75);
+	}
+
+	:global(#sidebar[data-state='true']) {
+		background: linear-gradient(145deg, #101313 0%, #171b1a 62%, #20241f 100%) !important;
+		border-left: 20px solid #8f9e35;
+		box-sizing: border-box;
+		width: 320px !important;
+	}
+
+	:global(#sidebar[data-state='true'] > div) {
+		width: 300px !important;
+		position: relative;
+		isolation: isolate;
+	}
+
+	:global(#sidebar[data-state='true'] > div)::after {
+		content: '';
+		position: absolute;
+		right: -42px;
+		bottom: -56px;
+		width: 170px;
+		height: 170px;
+		border: 20px solid rgba(142, 157, 53, 0.23);
+		border-top: 0;
+		border-left: 0;
+		transform: rotate(45deg);
+		pointer-events: none;
+		z-index: -1;
+	}
+
+	:global(#sidebar[data-state='true'] .sidebar) {
+		background: transparent !important;
+	}
+
+	:global(#sidebar[data-state='true'] > div > .sidebar:first-child) {
+		min-height: 96px;
+		padding: 22px 18px 12px 27px !important;
+		align-items: flex-start;
+		margin-bottom: 0 !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-webui-name) {
+		font-size: 0.72rem;
+		line-height: 1.45;
+		font-weight: 800;
+		text-transform: uppercase;
+		letter-spacing: 0.01em;
+		max-width: 172px;
+	}
+
+	:global(#sidebar[data-state='true'] .sidebar-brand-link) {
+		flex: 0 0 2.55rem;
+		align-self: flex-start;
+		margin-right: 6px;
+	}
+
+	:global(.sidebar-brand-mark) {
+		display: block !important;
+		width: 30px;
+		height: 38px;
+		filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.28));
+	}
+
+	:global(#sidebar[data-state='true'] > div > div:nth-child(2)) {
+		padding: 8px 20px 16px 21px !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-new-chat-button),
+	:global(#sidebar[data-state='true'] #sidebar-search-button),
+	:global(#sidebar[data-state='true'] #sidebar-notes-button),
+	:global(#sidebar[data-state='true'] #sidebar-workspace-button) {
+		min-height: 43px;
+		padding: 9px 8px !important;
+		gap: 12px;
+		border-radius: 10px;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-new-chat-button svg),
+	:global(#sidebar[data-state='true'] #sidebar-search-button svg),
+	:global(#sidebar[data-state='true'] #sidebar-notes-button svg),
+	:global(#sidebar[data-state='true'] #sidebar-workspace-button svg) {
+		width: 20px !important;
+		height: 20px !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-chats),
+	:global(#sidebar[data-state='true'] #sidebar-folders) {
+		padding-left: 2px !important;
+		padding-right: 2px !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-folder-button) {
+		min-height: 30px;
+		font-weight: 700;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-chat-item) {
+		min-height: 34px;
+		padding: 7px 8px !important;
+		border-radius: 9px;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-chat-item.selected) {
+		background: linear-gradient(90deg, rgba(143, 158, 53, 0.34), rgba(143, 158, 53, 0.14)) !important;
+		box-shadow: inset 3px 0 0 #9eae43;
+		color: #ffffff !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-chat-group:has(#sidebar-chat-item.selected)) {
+		border-radius: 9px;
+		overflow: hidden;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-chat-item-menu.selected) {
+		background-image: linear-gradient(
+			to left,
+			rgba(80, 89, 33, 0.98) 0%,
+			rgba(80, 89, 33, 0.92) 72%,
+			transparent 100%
+		) !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-chat-item:not(.sidebar-chat-selected):hover) {
+		background-color: rgba(143, 158, 53, 0.16) !important;
+	}
+
+	:global(#sidebar[data-state='true'] > div > div:last-child.sidebar) {
+		padding: 8px 20px 14px 21px !important;
+		background: linear-gradient(to top, #171b1a 70%, transparent) !important;
+	}
+
+	:global(#sidebar[data-state='true'] *) {
+		color: #ffffff !important;
+	}
+
+	:global(#sidebar[data-state='true'] .sidebar-bg-gradient-to-b) {
+		background-image: linear-gradient(to bottom, #050505 50%, transparent) !important;
+	}
+
+	:global(#sidebar[data-state='true'] .sidebar-bg-gradient-to-t) {
+		background-image: linear-gradient(to top, #050505 50%, transparent) !important;
+	}
+
+	:global(#sidebar[data-state='true'] a:hover),
+	:global(#sidebar[data-state='true'] button:hover),
+	:global(#sidebar[data-state='true'] [data-highlighted]) {
+		background-color: rgba(255, 255, 255, 0.08) !important;
+	}
+</style>
