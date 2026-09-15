@@ -201,7 +201,7 @@
 		await tick();
 		const logo = document.getElementById('logo') as HTMLImageElement | null;
 		if (logo) {
-			logo.src = `${WEBUI_BASE_URL}/static/ai-robot-cutout.png`;
+			logo.src = `${WEBUI_BASE_URL}/ai-robot-cutout.png`;
 			logo.style.filter = 'none';
 		}
 	}
@@ -289,7 +289,7 @@
 						<img
 							id="logo"
 							crossorigin="anonymous"
-							src="{WEBUI_BASE_URL}/static/ai-robot-cutout.png"
+							src="{WEBUI_BASE_URL}/ai-robot-cutout.png"
 							alt={$WEBUI_NAME}
 							class="robot-cutout"
 						/>
@@ -312,7 +312,7 @@
 								<div class="logo-chip" style="width:140px;height:140px;">
 									<img
 										crossorigin="anonymous"
-										src="{WEBUI_BASE_URL}/static/ai-robot-cutout.png"
+										src="{WEBUI_BASE_URL}/ai-robot-cutout.png"
 										alt={$WEBUI_NAME}
 										class="qendra-logo"
 									/>
