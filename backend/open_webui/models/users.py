@@ -336,12 +336,15 @@ class UsersTable:
         self, provider: str, sub: str, db: Optional[Session] = None
     ) -> Optional[UserModel]:
         try:
-            with get_db_context(db) as db:  # type: Session
-                dialect_name = db.bind.dialect.name
+            with get_db_context(db) as session:
+                dialect_name = session.get_bind().dialect.name
 
-                query = db.query(User)
+                query = session.query(User)
+
                 if dialect_name == "sqlite":
-                    query = query.filter(User.oauth.contains({provider: {"sub": sub}}))
+                    query = query.filter(
+                        User.oauth.contains({provider: {"sub": sub}})
+                    )
                 elif dialect_name == "postgresql":
                     query = query.filter(
                         User.oauth[provider].cast(JSONB)["sub"].astext == sub
@@ -349,18 +352,18 @@ class UsersTable:
 
                 user = query.first()
                 return UserModel.model_validate(user) if user else None
-        except Exception as e:
-            # You may want to log the exception here
+        except Exception:
             return None
 
     def get_user_by_scim_external_id(
         self, provider: str, external_id: str, db: Optional[Session] = None
     ) -> Optional[UserModel]:
         try:
-            with get_db_context(db) as db:  # type: Session
-                dialect_name = db.bind.dialect.name
+            with get_db_context(db) as session:
+                dialect_name = session.get_bind().dialect.name
 
-                query = db.query(User)
+                query = session.query(User)
+
                 if dialect_name == "sqlite":
                     query = query.filter(
                         User.scim.contains({provider: {"external_id": external_id}})
