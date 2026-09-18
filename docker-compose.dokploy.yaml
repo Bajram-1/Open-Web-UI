@@ -8,6 +8,8 @@ services:
       - "8080"
     environment:
       WEBUI_SECRET_KEY: ${WEBUI_SECRET_KEY}
+      # Require external PostgreSQL instead of silently creating local SQLite.
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL to a PostgreSQL connection URL in Dokploy}
       SCARF_NO_ANALYTICS: "true"
       DO_NOT_TRACK: "true"
       ANONYMIZED_TELEMETRY: "false"

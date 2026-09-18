@@ -1,94 +1,55 @@
-# Deploy ne Dokploy
+# Deploy ne Dokploy me PostgreSQL
 
-Ky projekt mund te deploy-ohet ne `Dokploy` duke perdorur file-in `docker-compose.dokploy.yaml`.
+Compose file: `docker-compose.dokploy.yaml`. Ai nis `open-webui` ne portin e
+brendshem `8080`. Databaza PostgreSQL duhet te jete e vecante dhe e aksesueshme
+nga serveri Dokploy; ky Compose nuk krijon PostgreSQL lokal.
 
-## Opsioni i rekomanduar
+## Konfigurimi
 
-Ky konfigurim nis dy sherbime:
+Krijo nje databaze dhe perdorues PostgreSQL te dedikuar. Prefero rrjet privat
+ose VPN; mos e ekspozo portin 5432 publikisht nese nuk eshte e nevojshme.
 
-- `open-webui`
-- `ollama`
-
-`Open WebUI` lidhet me `Ollama` permes rrjetit te brendshem Docker me adresen:
-
-```text
-http://ollama:11434
-```
-
-## File qe duhet perdorur ne Dokploy
-
-Per `Docker Compose deployment`, perdor:
+Te Dokploy, ne `Open Web UI` -> `Environment`, vendos:
 
 ```text
-docker-compose.dokploy.yaml
+WEBUI_SECRET_KEY=VLER_EKZISTUESE_OSE_SECRET_I_FORTE
+DATABASE_URL=postgresql://PERDORUESI:FJALEKALIMI@HOSTI:5432/EMRI_I_DATABAZES
 ```
 
-## Variablat e ambientit
+Vlerat me siper jane vendmbajtes, jo kredenciale reale. Mos i ruaj
+kredencialet ne GitHub ose ne screenshot-e. Nese PostgreSQL kerkon TLS, shto
+`?sslmode=require` ne fund te URL-se. Karakteret speciale ne fjalekalim
+duhen koduar ne URL. Ruaj vleren ekzistuese te `WEBUI_SECRET_KEY` gjate kalimit.
 
-Ne `Dokploy`, shto te pakten kete variable:
+`DATABASE_URL` eshte e detyrueshme: Compose refuzon deploy-in nese mungon,
+ne vend qe Open WebUI te kthehet pa dashje te SQLite. Docker image perfshin
+driver-in PostgreSQL. Konfiguro domain-in e Dokploy per sherbimin `open-webui`
+ne portin `8080`, pastaj bej deploy.
 
-```text
-WEBUI_SECRET_KEY=vendos-nje-secret-te-forte-ketu
-```
+## Perdoruesit ekzistues
 
-Shembull:
+**Mos bej redeploy direkt nese ke llogari ekzistuese.** Nderrimi i
+`DATABASE_URL` nuk i transferon automatikisht regjistrimet ose bisedat nga
+`webui.db` ne PostgreSQL. Para kalimit:
 
-```text
-WEBUI_SECRET_KEY=farsh-openwebui-2026-secret-key
-```
+1. Ndal regjistrimet/shkrimet dhe bej backup te volumit `open-webui-data`,
+   vecanerisht `webui.db` dhe `uploads/`.
+2. Migro databazen ekzistuese ne PostgreSQL dhe verifiko tabelat e
+   autentifikimit, perdoruesit dhe bisedat. Mos kopjo vetem perdoruesit,
+   sepse te dhenat kane lidhje me tabela te tjera.
+3. Vendos `DATABASE_URL`, bej deploy dhe testo hyrjen me nje llogari
+   ekzistuese, regjistrimin e nje llogarie prove dhe historikun e bisedave.
+4. Mbaj backup-in e SQLite derisa te kesh verifikuar gjithcka.
 
-## Porti
+Migrimi real kerkon akses te sigurt te dy databazave dhe nje dritare
+mirembajtjeje. Ky ndryshim i Compose nuk ben migrim automatik.
 
-Sherbimi `open-webui` ekspozon:
+## Cfare mbetet lokalisht
 
-```text
-3000
-```
+Volumi `open-webui-data` vazhdon te nevojitet per skedaret e ngarkuar dhe
+cache-in. Regjistrimet, hash-et e fjalekalimeve, bisedat dhe metadatat e
+aplikacionit do te ruhen ne PostgreSQL. Bej backup si te PostgreSQL ashtu
+edhe te volumit te skedareve.
 
-Brenda container-it aplikacioni punon ne:
-
-```text
-8080
-```
-
-## Hapat ne Dokploy
-
-1. Krijo nje projekt te ri ne `Dokploy`.
-2. Zgjidh `Compose`.
-3. Lidh repository-n ose ngarko kodin e projektit.
-4. Zgjidh file-in `docker-compose.dokploy.yaml`.
-5. Shto variablen `WEBUI_SECRET_KEY`.
-6. Vendos domain-in tend.
-7. Deploy.
-
-## Domain dhe proxy
-
-Nese `Dokploy` perdor reverse proxy, drejtoje trafikun te sherbimi `open-webui` ne portin `3000`.
-
-## Persistenca e te dhenave
-
-Konfigurimi ruan te dhenat ne volume Docker:
-
-- `open-webui-data`
-- `ollama-data`
-
-Kjo do te thote se:
-
-- databaza e `Open WebUI` ruhet pas restart-it
-- modelet e `Ollama` ruhen pas restart-it
-
-## Nese do te perdoresh Ollama jashte Dokploy
-
-Nese ke nje server tjeter me `Ollama`, mund te ndryshosh:
-
-```yaml
-OLLAMA_BASE_URL: http://ollama:11434
-```
-
-ne:
-
-```yaml
-OLLAMA_BASE_URL: http://IP-OSE-DOMAIN-I-OLLAMA:11434
-```
-
-Ne ate rast mund ta heqesh fare sherbimin `ollama` nga compose.
+Lidhja me Ollama ose backend-in RAG konfigurohet vecmas nga databaza,
+ne panelin e administratorit te Open WebUI.
