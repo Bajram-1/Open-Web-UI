@@ -12,10 +12,8 @@
 
 	import { getBackendConfig } from '$lib/apis';
 	import {
-		ldapUserSignIn,
 		getSessionUser,
 		userSignIn,
-		userSignUp,
 		updateUserTimezone
 	} from '$lib/apis/auths';
 
@@ -23,10 +21,9 @@
 	import { changeLanguage } from '$lib/i18n';
 	import { WEBUI_NAME, config, user, socket } from '$lib/stores';
 
-	import { generateInitialsImage, canvasPixelTest, getUserTimezone } from '$lib/utils';
+	import { getUserTimezone } from '$lib/utils';
 
 	import Spinner from '$lib/components/common/Spinner.svelte';
-	import OnBoarding from '$lib/components/OnBoarding.svelte';
 	import SensitiveInput from '$lib/components/common/SensitiveInput.svelte';
 	type RuntimeConfig = {
 		features: {
@@ -37,7 +34,6 @@
 			enable_ldap?: boolean;
 			enable_signup_password_confirmation?: boolean;
 		};
-		onboarding?: boolean;
 		oauth?: {
 			providers?: Record<string, string | boolean | undefined>;
 		};
@@ -53,16 +49,11 @@
 
 	let loaded = false;
 
-	let mode = runtimeConfig?.features.enable_ldap ? 'ldap' : 'signin';
+	let mode = 'signin';
 
-	let form: string | null = null;
-
-	let name = '';
 	let email = '';
 	let password = '';
-	let confirmPassword = '';
 
-	let ldapUsername = '';
 	let isSubmitting = false;
 	let authError = '';
 
@@ -124,50 +115,18 @@
 		await setSessionUser(sessionUser);
 	};
 
-	const signUpHandler = async () => {
-		if (runtimeConfig?.features.enable_signup_password_confirmation) {
-			if (password !== confirmPassword) {
-				toast.error($i18n.t('Passwords do not match.'));
-				return;
-			}
-		}
-
-		const sessionUser = await userSignUp(name, email, password, generateInitialsImage(name)).catch(
-			(error) => {
-				reportAuthError(error);
-				return null;
-			}
-		);
-
-		await setSessionUser(sessionUser);
-	};
-
-	const ldapSignInHandler = async () => {
-		const sessionUser = await ldapUserSignIn(ldapUsername, password).catch((error) => {
-			reportAuthError(error);
-			return null;
-		});
-		await setSessionUser(sessionUser);
-	};
-
 	const submitHandler = async () => {
 		if (isSubmitting) return;
 		authError = '';
 
-		if (!password || (mode === 'ldap' ? !ldapUsername : !email)) {
+		if (!password || !email) {
 			authError = 'Plotësoni të gjitha fushat e detyrueshme.';
 			return;
 		}
 
 		isSubmitting = true;
 		try {
-			if (mode === 'ldap') {
-				await ldapSignInHandler();
-			} else if (mode === 'signin') {
-				await signInHandler();
-			} else {
-				await signUpHandler();
-			}
+			await signInHandler();
 		} finally {
 			isSubmitting = false;
 		}
@@ -195,7 +154,7 @@
 		await setSessionUser(sessionUser, localStorage.getItem('redirectPath') || null);
 	};
 
-	let onboarding = false;
+
 
 	async function setLogoImage() {
 		await tick();
@@ -227,15 +186,12 @@
 		}
 
 		await oauthCallbackHandler();
-		form = $page.url.searchParams.get('form');
 
 		loaded = true;
 		setLogoImage();
 
 		if ((runtimeConfig?.features.auth_trusted_header ?? false) || runtimeConfig?.features.auth === false) {
 			await signInHandler();
-		} else {
-			onboarding = runtimeConfig?.onboarding ?? false;
 		}
 	});
 </script>
@@ -249,14 +205,6 @@
 		rel="stylesheet"
 	/>
 </svelte:head>
-
-<OnBoarding
-	bind:show={onboarding}
-	getStartedHandler={() => {
-		onboarding = false;
-		mode = runtimeConfig?.features.enable_ldap ? 'ldap' : 'signup';
-	}}
-/>
 
 <div class="auth-page" id="auth-page">
 	<div class="grid-bg"></div>
@@ -325,128 +273,43 @@
 
 						<div class="card-header">
 							<div class="card-kicker">{$i18n.t('Authorized Access')}</div>
-							<h2 class="card-title">
-								{mode === 'signup' ? $i18n.t('Create Account') : $i18n.t('Welcome Back')}
-							</h2>
-							<p class="card-subtitle">
-								{#if mode === 'signup'}
-									{$i18n.t('Set up your secure account to access the platform.')}
-								{:else if mode === 'ldap'}
-									{$i18n.t('Authenticate with your organization credentials.')}
-								{:else}
-									{$i18n.t('Sign in to continue to your workspace.')}
-								{/if}
-							</p>
+							<h2 class="card-title">{$i18n.t('Welcome Back')}</h2>
+							<p class="card-subtitle">{$i18n.t('Sign in to continue to your workspace.')}</p>
 						</div>
 
-						{#if runtimeConfig?.features.enable_signup && !(runtimeConfig?.onboarding ?? false) && !runtimeConfig?.features.enable_ldap}
-							<div class="mode-tabs">
-								<button
-									type="button"
-									class="mode-tab {mode === 'signin' ? 'active' : ''}"
-									on:click={() => (mode = 'signin')}
-								>
-									{$i18n.t('SIGN IN')}
-								</button>
-								<button
-									type="button"
-									class="mode-tab {mode === 'signup' ? 'active' : ''}"
-									on:click={() => (mode = 'signup')}
-								>
-									{$i18n.t('SIGN UP')}
-								</button>
-							</div>
-						{/if}
-
-						{#if runtimeConfig?.features.enable_login_form || runtimeConfig?.features.enable_ldap || form}
-							<form
+						<form
 								on:submit={(e) => {
 									e.preventDefault();
 									submitHandler();
 								}}
 							>
-								{#if mode === 'signup'}
-									<div class="field-group">
-										<label for="name" class="field-label">{$i18n.t('Full Name')}</label>
-										<div class="field-wrap">
-											<svg
-												class="field-icon"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-											>
-												<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-												<circle cx="12" cy="7" r="4" />
-											</svg>
-											<input
-												bind:value={name}
-												type="text"
-												id="name"
-												class="field-input"
-												autocomplete="name"
-												placeholder={$i18n.t('Enter your full name')}
-												required
+								<div class="field-group">
+									<label for="email" class="field-label">{$i18n.t('Email')}</label>
+									<div class="field-wrap">
+										<svg
+											class="field-icon"
+											viewBox="0 0 24 24"
+											fill="none"
+											stroke="currentColor"
+											stroke-width="2"
+										>
+											<path
+												d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
 											/>
-										</div>
+											<polyline points="22,6 12,13 2,6" />
+										</svg>
+										<input
+											bind:value={email}
+											type="email"
+											id="email"
+											name="email"
+											class="field-input"
+											autocomplete="email"
+											placeholder={$i18n.t('Enter your email')}
+											required
+										/>
 									</div>
-								{/if}
-
-								{#if mode === 'ldap'}
-									<div class="field-group">
-										<label for="username" class="field-label">{$i18n.t('Username')}</label>
-										<div class="field-wrap">
-											<svg
-												class="field-icon"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-											>
-												<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-												<circle cx="12" cy="7" r="4" />
-											</svg>
-											<input
-												bind:value={ldapUsername}
-												type="text"
-												id="username"
-												name="username"
-												class="field-input"
-												autocomplete="username"
-												placeholder={$i18n.t('Enter your username')}
-												required
-											/>
-										</div>
-									</div>
-								{:else}
-									<div class="field-group">
-										<label for="email" class="field-label">{$i18n.t('Email')}</label>
-										<div class="field-wrap">
-											<svg
-												class="field-icon"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-											>
-												<path
-													d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-												/>
-												<polyline points="22,6 12,13 2,6" />
-											</svg>
-											<input
-												bind:value={email}
-												type="email"
-												id="email"
-												name="email"
-												class="field-input"
-												autocomplete="email"
-												placeholder={$i18n.t('Enter your email')}
-												required
-											/>
-										</div>
-									</div>
-								{/if}
+								</div>
 
 								<div class="field-group">
 									<label for="password" class="field-label">{$i18n.t('Password')}</label>
@@ -466,39 +329,11 @@
 											type="password"
 											id="password"
 											placeholder={$i18n.t('Enter your password')}
-											autocomplete={mode === 'signup' ? 'new-password' : 'current-password'}
+											autocomplete="current-password"
 											required
 										/>
 									</div>
 								</div>
-
-								{#if mode === 'signup' && runtimeConfig?.features.enable_signup_password_confirmation}
-									<div class="field-group">
-										<label for="confirm-password" class="field-label"
-											>{$i18n.t('Confirm Password')}</label
-										>
-										<div class="field-wrap">
-											<svg
-												class="field-icon"
-												viewBox="0 0 24 24"
-												fill="none"
-												stroke="currentColor"
-												stroke-width="2"
-											>
-												<rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-												<path d="M7 11V7a5 5 0 0 1 10 0v4" />
-											</svg>
-											<SensitiveInput
-												bind:value={confirmPassword}
-												type="password"
-												id="confirm-password"
-												placeholder={$i18n.t('Confirm your password')}
-												autocomplete="new-password"
-												required
-											/>
-										</div>
-									</div>
-								{/if}
 
 								{#if authError}
 									<div class="auth-error" role="alert" aria-live="polite">{authError}</div>
@@ -514,14 +349,8 @@
 										{#if isSubmitting}
 											<span class="button-spinner" aria-hidden="true"></span>
 											Duke u lidhur…
-										{:else if mode === 'ldap'}
-											{$i18n.t('Authenticate')}
-										{:else if mode === 'signin'}
-											{$i18n.t('Sign In')}
-										{:else if runtimeConfig?.onboarding ?? false}
-											{$i18n.t('Create Admin Account')}
 										{:else}
-											{$i18n.t('Create Account')}
+											{$i18n.t('Sign In')}
 										{/if}
 									</span>
 						<svg class:is-hidden={isSubmitting} class="submit-security-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true">
@@ -533,14 +362,11 @@
 									Vetëm për personel të autorizuar
 								</p>
 							</form>
-						{/if}
 
 						{#if Object.keys(runtimeConfig?.oauth?.providers ?? {}).length > 0}
 							<div class="oauth-divider">
 								<hr />
-								{#if runtimeConfig?.features.enable_login_form || runtimeConfig?.features.enable_ldap || form}
-									<span>{$i18n.t('OR')}</span>
-								{/if}
+								<span>{$i18n.t('OR')}</span>
 								<hr />
 							</div>
 
@@ -648,20 +474,7 @@
 							</div>
 						{/if}
 
-						{#if runtimeConfig?.features.enable_ldap && runtimeConfig?.features.enable_login_form}
-							<div class="ldap-toggle">
-								<button
-									type="button"
-									on:click={() => {
-										if (mode === 'ldap')
-											mode = (runtimeConfig?.onboarding ?? false) ? 'signup' : 'signin';
-										else mode = 'ldap';
-									}}
-								>
-									{mode === 'ldap' ? $i18n.t('Continue with Email') : $i18n.t('Continue with LDAP')}
-								</button>
-							</div>
-						{/if}
+
 
 						{#if runtimeConfig?.metadata?.login_footer}
 							<div class="marked">

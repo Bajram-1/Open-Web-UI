@@ -12,6 +12,10 @@ services:
     environment:
       - 'WEBUI_SECRET_KEY='
       - 'OPENAI_API_BASE_URL=http://host.docker.internal:5000/v1'
+      - 'WEBUI_ADMIN_EMAIL=admin@example.com'
+      - 'WEBUI_ADMIN_PASSWORD=admin123'
+      - 'WEBUI_ADMIN_NAME=Admin'
+      - 'ENABLE_SIGNUP=false'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped
