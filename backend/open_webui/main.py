@@ -1883,7 +1883,7 @@ async def chat_completion(
         form_data["metadata"] = metadata
 
         # Model routing: Check if PDF files are attached and route to RAG model
-        files = metadata.get("files", [])
+        files = metadata.get("files") or []
         has_pdf_files = any(
             file.get("type") == "file" and
             (file.get("meta", {}).get("name", "").lower().endswith(".pdf") or
