@@ -1724,6 +1724,7 @@ async def chat_completion(
     tasks = form_data.pop("background_tasks", None)
 
     metadata = {}
+    explicitly_allowed_model = False
     try:
         model_info = None
         if not model_item.get("direct", False):
@@ -1739,8 +1740,9 @@ async def chat_completion(
                 for allowed_id in os.environ.get("END_USER_MODEL_IDS", "").split(",")
                 if allowed_id.strip()
             }
+            explicitly_allowed_model = model_id in end_user_model_ids
             explicitly_allowed_for_user = (
-                user.role == "user" and model_id in end_user_model_ids
+                user.role == "user" and explicitly_allowed_model
             )
 
             if not explicitly_allowed_for_user and not BYPASS_MODEL_ACCESS_CONTROL and (
@@ -1773,7 +1775,12 @@ async def chat_completion(
         # preset. A database model can share its ID with a live provider model;
         # in that case a stale base_model_id must not shadow the provider model
         # and make an otherwise available model fail with "Model not found".
-        if model_info and model_info.base_model_id and model.get("preset", False):
+        if (
+            model_info
+            and model_info.base_model_id
+            and model.get("preset", False)
+            and not explicitly_allowed_model
+        ):
             base_model_id = model_info.base_model_id
             if base_model_id not in request.app.state.MODELS:
                 if ENABLE_CUSTOM_MODEL_FALLBACK:
