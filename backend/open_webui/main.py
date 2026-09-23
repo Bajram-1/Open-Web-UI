@@ -1769,8 +1769,11 @@ async def chat_completion(
             ),
         }
 
-        # Check base model existence for custom models
-        if model_info and model_info.base_model_id:
+        # Only resolve a base model when the selected item is an actual custom
+        # preset. A database model can share its ID with a live provider model;
+        # in that case a stale base_model_id must not shadow the provider model
+        # and make an otherwise available model fail with "Model not found".
+        if model_info and model_info.base_model_id and model.get("preset", False):
             base_model_id = model_info.base_model_id
             if base_model_id not in request.app.state.MODELS:
                 if ENABLE_CUSTOM_MODEL_FALLBACK:
