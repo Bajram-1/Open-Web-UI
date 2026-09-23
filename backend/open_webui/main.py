@@ -1634,7 +1634,25 @@ async def get_models(
             )
         )
 
+    unfiltered_models = models
     models = get_filtered_models(models, user)
+
+    # Administrators can expose a narrowly scoped set of chat models to
+    # regular users without disabling model access control globally. This
+    # affects only model listing/selection and does not grant access to model
+    # management, Workspace, uploads or other administrator capabilities.
+    end_user_model_ids = {
+        model_id.strip()
+        for model_id in os.environ.get("END_USER_MODEL_IDS", "").split(",")
+        if model_id.strip()
+    }
+    if user.role == "user" and end_user_model_ids:
+        models_by_id = {model.get("id"): model for model in models}
+        for model in unfiltered_models:
+            model_id = model.get("id")
+            if model_id in end_user_model_ids:
+                models_by_id[model_id] = model
+        models = list(models_by_id.values())
 
     # Deployment-level allowlist for the user-facing model selector. The
     # underlying provider models remain installed and available to internal
@@ -1716,7 +1734,16 @@ async def chat_completion(
             model_info = Models.get_model_by_id(model_id)
 
             # Check if user has access to the model
-            if not BYPASS_MODEL_ACCESS_CONTROL and (
+            end_user_model_ids = {
+                allowed_id.strip()
+                for allowed_id in os.environ.get("END_USER_MODEL_IDS", "").split(",")
+                if allowed_id.strip()
+            }
+            explicitly_allowed_for_user = (
+                user.role == "user" and model_id in end_user_model_ids
+            )
+
+            if not explicitly_allowed_for_user and not BYPASS_MODEL_ACCESS_CONTROL and (
                 user.role != "admin" or not BYPASS_ADMIN_ACCESS_CONTROL
             ):
                 try:

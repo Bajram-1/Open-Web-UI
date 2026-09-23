@@ -20,6 +20,10 @@ services:
       ENABLE_SIGNUP: "false"
       DEFAULT_USER_ROLE: "user"
 
+      # Models that regular users may see and select in chat. Keep this list
+      # explicit so internal/provider models remain hidden.
+      END_USER_MODEL_IDS: ${END_USER_MODEL_IDS:-ai-digital-assistant-of-albanian-armed-forces,gemma4:e4b}
+
       # Regular users are chat-only. Administrators bypass these restrictions
       # and retain access to user CRUD, Knowledge and document management.
       USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS: "false"
