@@ -1725,6 +1725,7 @@ async def chat_completion(
 
     metadata = {}
     explicitly_allowed_model = False
+    explicitly_allowed_for_user = False
     try:
         model_info = None
         if not model_item.get("direct", False):
@@ -1744,6 +1745,12 @@ async def chat_completion(
             explicitly_allowed_for_user = (
                 user.role == "user" and explicitly_allowed_model
             )
+
+            if explicitly_allowed_model:
+                # Keep the live provider ID throughout the OpenAI dispatch path.
+                # A stale database preset may otherwise replace it with a missing
+                # base_model_id and fail after the initial access check succeeds.
+                request.base_model_id = model_id
 
             if not explicitly_allowed_for_user and not BYPASS_MODEL_ACCESS_CONTROL and (
                 user.role != "admin" or not BYPASS_ADMIN_ACCESS_CONTROL
@@ -1900,7 +1907,12 @@ async def chat_completion(
                 request, form_data, user, metadata, model
             )
 
-            response = await chat_completion_handler(request, form_data, user)
+            response = await chat_completion_handler(
+                request,
+                form_data,
+                user,
+                bypass_filter=explicitly_allowed_for_user,
+            )
             if metadata.get("chat_id") and metadata.get("message_id"):
                 try:
                     if not metadata["chat_id"].startswith("local:"):
