@@ -1257,10 +1257,6 @@ DEFAULT_MODELS = PersistentConfig(
     "DEFAULT_MODELS", "ui.default_models", os.environ.get("DEFAULT_MODELS", None)
 )
 
-RAG_MODEL = PersistentConfig(
-    "RAG_MODEL", "ui.rag_model", os.environ.get("RAG_MODEL", None)
-)
-
 DEFAULT_PINNED_MODELS = PersistentConfig(
     "DEFAULT_PINNED_MODELS",
     "ui.default_pinned_models",

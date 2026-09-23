@@ -16,8 +16,6 @@ services:
       - 'WEBUI_ADMIN_PASSWORD=admin123'
       - 'WEBUI_ADMIN_NAME=Admin'
       - 'ENABLE_SIGNUP=false'
-      - 'DEFAULT_MODELS=gemma4'
-      - 'RAG_MODEL=gemma4'
     extra_hosts:
       - host.docker.internal:host-gateway
     restart: unless-stopped

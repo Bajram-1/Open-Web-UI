@@ -394,7 +394,6 @@ from open_webui.config import (
     PENDING_USER_OVERLAY_TITLE,
     DEFAULT_PROMPT_SUGGESTIONS,
     DEFAULT_MODELS,
-    RAG_MODEL,
     DEFAULT_PINNED_MODELS,
     DEFAULT_ARENA_MODEL,
     MODEL_ORDER_LIST,
@@ -842,7 +841,6 @@ app.state.config.ADMIN_EMAIL = ADMIN_EMAIL
 
 
 app.state.config.DEFAULT_MODELS = DEFAULT_MODELS
-app.state.config.RAG_MODEL = RAG_MODEL
 app.state.config.DEFAULT_PINNED_MODELS = DEFAULT_PINNED_MODELS
 app.state.config.MODEL_ORDER_LIST = MODEL_ORDER_LIST
 app.state.config.DEFAULT_MODEL_METADATA = DEFAULT_MODEL_METADATA
@@ -1881,24 +1879,6 @@ async def chat_completion(
 
         request.state.metadata = metadata
         form_data["metadata"] = metadata
-
-        # Model routing: Check if PDF files are attached and route to RAG model
-        files = metadata.get("files", [])
-        has_pdf_files = any(
-            file.get("type") == "file" and
-            (file.get("meta", {}).get("name", "").lower().endswith(".pdf") or
-             file.get("filename", "").lower().endswith(".pdf"))
-            for file in files
-        )
-
-        if has_pdf_files and request.app.state.config.RAG_MODEL:
-            rag_model_id = request.app.state.config.RAG_MODEL
-            if rag_model_id in request.app.state.MODELS:
-                log.info(f"PDF files detected, routing to RAG model: {rag_model_id}")
-                form_data["model"] = rag_model_id
-                model_id = rag_model_id
-                model = request.app.state.MODELS[rag_model_id]
-                metadata["model"] = model
 
     except Exception as e:
         log.debug(f"Error processing chat metadata: {e}")
