@@ -91,7 +91,7 @@
 
 		<div class="flex items-center gap-2">
 			<div class="flex items-center min-w-fit">
-				<Tooltip content={$user?.role === 'admin' ? (item?.value ?? '') : ''} placement="top-start">
+				<Tooltip content={item?.label ?? ''} placement="top-start">
 					<img
 						src={getModelImageUrl(item.model, item.label)}
 						alt={$i18n.t('{{modelName}} profile image', { modelName: item.label })}
