@@ -46,7 +46,7 @@
 		const modelId = `${model?.id ?? ''}`.toLowerCase();
 		const modelLabel = `${label ?? ''}`.toLowerCase();
 
-		if (modelLabel.includes('arena')) {
+		if (model?.arena || model?.owned_by === 'arena' || modelLabel.includes('arena')) {
 			return `${WEBUI_BASE_URL}/static/model-arena.svg`;
 		}
 
