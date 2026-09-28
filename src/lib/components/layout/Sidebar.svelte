@@ -1562,6 +1562,12 @@
 	:global(#sidebar[data-state='true'] #sidebar-folder-button) {
 		min-height: 30px;
 		font-weight: 700;
+		background: transparent !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-folder-button:hover),
+	:global(#sidebar[data-state='true'] #sidebar-folder-button:focus-within) {
+		background: transparent !important;
 	}
 
 	:global(#sidebar[data-state='true'] #sidebar-chat-item) {
