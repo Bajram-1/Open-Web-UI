@@ -1570,6 +1570,18 @@
 		background: transparent !important;
 	}
 
+	/* Folder rows inherit Open WebUI's light selected background. Keep them
+	   integrated with the branded dark sidebar in every interaction state. */
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button']),
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button'].selected) {
+		background: transparent !important;
+	}
+
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button']:hover),
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button']:focus-within) {
+		background: rgb(255 255 255 / 0.06) !important;
+	}
+
 	:global(#sidebar[data-state='true'] #sidebar-chat-item) {
 		min-height: 34px;
 		padding: 7px 8px !important;
