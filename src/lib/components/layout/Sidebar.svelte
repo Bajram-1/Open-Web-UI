@@ -1562,6 +1562,24 @@
 	:global(#sidebar[data-state='true'] #sidebar-folder-button) {
 		min-height: 30px;
 		font-weight: 700;
+		background: transparent !important;
+	}
+
+	:global(#sidebar[data-state='true'] #sidebar-folder-button:hover),
+	:global(#sidebar[data-state='true'] #sidebar-folder-button:focus-within) {
+		background: transparent !important;
+	}
+
+	/* Folder rows inherit Open WebUI's light selected background. Keep them
+	   integrated with the branded dark sidebar in every interaction state. */
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button']),
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button'].selected) {
+		background: transparent !important;
+	}
+
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button']:hover),
+	:global(#sidebar[data-state='true'] [id^='folder-'][id$='-button']:focus-within) {
+		background: rgb(255 255 255 / 0.06) !important;
 	}
 
 	:global(#sidebar[data-state='true'] #sidebar-chat-item) {

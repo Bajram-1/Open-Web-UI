@@ -202,7 +202,7 @@
 			{/if}
 
 			<DropdownMenu.Item
-				class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+				class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 				on:click={async () => {
 					show = false;
 
@@ -221,7 +221,7 @@
 			</DropdownMenu.Item>
 
 			<DropdownMenu.Item
-				class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+				class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 				on:click={async () => {
 					show = false;
 
@@ -245,7 +245,7 @@
 					as="a"
 					href="/playground"
 					draggable="false"
-					class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+					class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 					on:click={async () => {
 						show = false;
 						if ($mobile) {
@@ -263,7 +263,7 @@
 					as="a"
 					href="/admin"
 					draggable="false"
-					class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+					class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 					on:click={async () => {
 						show = false;
 						if ($mobile) {
@@ -290,7 +290,7 @@
 						href="https://docs.openwebui.com"
 						target="_blank"
 						draggable="false"
-						class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+						class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 						id="chat-share-button"
 						on:click={() => {
 							show = false;
@@ -308,7 +308,7 @@
 						href="https://github.com/open-webui/open-webui/releases"
 						target="_blank"
 						draggable="false"
-						class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+						class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 						id="chat-share-button"
 						on:click={() => {
 							show = false;
@@ -322,7 +322,7 @@
 				{/if}
 
 				<DropdownMenu.Item
-					class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+					class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 					id="chat-share-button"
 					on:click={async () => {
 						show = false;
@@ -344,7 +344,7 @@
 			<hr class=" border-gray-50/30 dark:border-gray-800/30 my-1 p-0" />
 
 			<DropdownMenu.Item
-				class="flex rounded-xl py-1.5 px-3 w-full text-white hover:!bg-black focus:!bg-black data-[highlighted]:!bg-black transition cursor-pointer select-none"
+				class="flex rounded-xl py-1.5 px-3 w-full text-white bg-white/[0.06] hover:!bg-white/[0.12] focus:!bg-white/[0.12] data-[highlighted]:!bg-white/[0.12] transition cursor-pointer select-none"
 				on:click={async () => {
 					const res = await userSignOut();
 					user.set(null);

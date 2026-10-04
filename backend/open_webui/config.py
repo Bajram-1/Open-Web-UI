@@ -1737,10 +1737,10 @@ EVALUATION_ARENA_MODELS = PersistentConfig(
 
 DEFAULT_ARENA_MODEL = {
     "id": "arena-model",
-    "name": "Arena Model",
+    "name": "Paneli i Modeleve",
     "meta": {
-        "profile_image_url": "/favicon.png",
-        "description": "Submit your questions to anonymous AI chatbots and vote on the best response.",
+        "profile_image_url": "/static/model-arena.svg",
+        "description": "Dërgojeni pyetjen te disa modele, krahasoni përgjigjet dhe votoni përgjigjen më të mirë.",
         "model_ids": None,
     },
 }
