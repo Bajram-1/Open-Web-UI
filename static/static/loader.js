@@ -16,8 +16,10 @@
 (function () {
   "use strict";
 
-  // Address of the documents page, as the administrators' browsers reach it.
-  var DOCUMENTS_URL = window.RAG_DOCUMENTS_URL || "http://192.168.88.196:8000/admin";
+  // Address of the documents page. By default it is published under the
+  // OpenWebUI address itself (/dokumentet, a Traefik route to the assistant,
+  // DOCUMENTS.md), so it opens wherever OpenWebUI opens.
+  var DOCUMENTS_URL = window.RAG_DOCUMENTS_URL || "/dokumentet/admin";
   var LABEL = "Dokumentet";
   var MARK = "data-rag-documents";
   var ICON =
