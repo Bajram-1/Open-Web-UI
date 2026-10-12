@@ -40,5 +40,21 @@ services:
     volumes:
       - open-webui-data:/app/backend/data
 
+  # The assistant's documents page under the OpenWebUI address:
+  # https://<domain>/dokumentet/admin. In Dokploy -> Domains this service gets
+  # the same host with Path /dokumentet and "Strip Path" on. It passes on only
+  # the page (/admin) and the document API (/documents) of the assistant,
+  # never its chat API. The menu item "Dokumentet" (static/static/loader.js)
+  # opens it.
+  rag-dokumentet:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    expose:
+      - "80"
+    environment:
+      RAG_API_URL: ${RAG_API_URL:-http://192.168.88.196:8000}
+    volumes:
+      - ./rag-dokumentet.conf.template:/etc/nginx/templates/default.conf.template:ro
+
 volumes:
   open-webui-data:
