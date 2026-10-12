@@ -3,9 +3,9 @@
  *
  * OpenWebUI loads /static/loader.js on every page (an empty file by
  * default). This one adds, below "Hapësira e punës" (Workspace), an item
- * that opens the assistant's documents page (rag/admin_page.py) in a new
- * tab and signs the administrator in there with the OpenWebUI session, so no
- * second password is needed. Users who are not admins never see it (and the
+ * that opens the assistant's documents page (rag/admin_page.py) inside
+ * OpenWebUI, next to the sidebar, and signs the administrator in there with
+ * the OpenWebUI session, so no second password is needed. Users who are not admins never see it (and the
  * documents page would refuse them anyway: it checks the role with OpenWebUI).
  *
  * It lives in the OpenWebUI repository (Bajram-1/Open-Web-UI) as
@@ -17,8 +17,9 @@
   "use strict";
 
   // Address of the documents page. By default it is published under the
-  // OpenWebUI address itself (/dokumentet, a Traefik route to the assistant,
-  // DOCUMENTS.md), so it opens wherever OpenWebUI opens.
+  // OpenWebUI address itself (/dokumentet, the rag-dokumentet service of the
+  // OpenWebUI compose, DOCUMENTS.md), so it opens wherever OpenWebUI opens and
+  // can be shown inside it.
   var DOCUMENTS_URL = window.RAG_DOCUMENTS_URL || "/dokumentet/admin";
   var LABEL = "Dokumentet";
   var MARK = "data-rag-documents";
@@ -53,35 +54,99 @@
   }
 
   // ---------------------------------------------------------------------
-  // Opening the page and handing over the session
+  // The page inside OpenWebUI: a panel over the main area, next to the
+  // sidebar, closed by any other menu item, by Esc or by the browser's Back
   // ---------------------------------------------------------------------
+
+  var panel = null;
+  var frame = null;
+  var answered = false;
+
+  function sidebarEdge() {
+    var sidebar = document.getElementById("sidebar");
+    if (!sidebar) return 0;
+    var box = sidebar.getBoundingClientRect();
+    // On narrow screens the sidebar lies over the page: use the whole width.
+    if (box.width === 0 || box.right <= 0 || window.innerWidth < 768) return 0;
+    return Math.round(box.right);
+  }
+
+  function place() {
+    if (!panel) return;
+    panel.style.left = sidebarEdge() + "px";
+  }
+
+  function onMessage(message) {
+    // Only the page in the panel, from this same address, gets the session.
+    if (!frame || message.source !== frame.contentWindow || message.origin !== documentsOrigin) return;
+    if (!message.data || message.data.type !== "rag-admin-ready" || answered) return;
+    answered = true;
+    session().then(function (user) {
+      if (user && user.role === "admin" && user.token && frame) {
+        frame.contentWindow.postMessage({ type: "rag-admin-session", token: user.token }, documentsOrigin);
+      }
+    });
+  }
+
+  function markActive(active) {
+    var items = document.querySelectorAll("[" + MARK + "] a");
+    for (var i = 0; i < items.length; i++) {
+      items[i].style.background = active ? "rgba(127, 127, 127, 0.14)" : "";
+      if (active) items[i].setAttribute("aria-current", "page");
+      else items[i].removeAttribute("aria-current");
+    }
+  }
+
+  function closeDocuments() {
+    if (!panel) return;
+    panel.remove();
+    panel = null;
+    frame = null;
+    answered = false;
+    markActive(false);
+    window.removeEventListener("resize", place);
+  }
 
   function openDocuments(event) {
     event.preventDefault();
     event.stopPropagation();
-    var page = window.open(DOCUMENTS_URL, "rag-documents");
-    if (!page) {
-      window.location.href = DOCUMENTS_URL; // pop-ups blocked: sign in there
-      return;
-    }
-    var answered = false;
-    function onMessage(message) {
-      // Only the page just opened, from the documents address, gets the session.
-      if (message.source !== page || message.origin !== documentsOrigin) return;
-      if (!message.data || message.data.type !== "rag-admin-ready" || answered) return;
-      answered = true;
-      window.removeEventListener("message", onMessage);
-      session().then(function (user) {
-        if (user && user.role === "admin" && user.token) {
-          page.postMessage({ type: "rag-admin-session", token: user.token }, documentsOrigin);
-        }
-      });
-    }
-    window.addEventListener("message", onMessage);
-    setTimeout(function () {
-      window.removeEventListener("message", onMessage);
-    }, 60000);
+    if (panel) return;
+    panel = document.createElement("div");
+    panel.setAttribute("data-rag-documents-panel", "");
+    panel.setAttribute("role", "region");
+    panel.setAttribute("aria-label", LABEL);
+    panel.style.cssText =
+      "position:fixed;top:0;right:0;bottom:0;z-index:40;background:var(--color-white, #fff);" +
+      "box-shadow:-1px 0 0 rgba(127,127,127,.18);";
+    frame = document.createElement("iframe");
+    frame.src = DOCUMENTS_URL;
+    frame.title = LABEL;
+    frame.style.cssText = "border:0;width:100%;height:100%;display:block;";
+    panel.appendChild(frame);
+    document.body.appendChild(panel);
+    place();
+    markActive(true);
+    window.addEventListener("resize", place);
   }
+
+  window.addEventListener("message", onMessage);
+  // Any other menu item (or link in the sidebar) closes the panel.
+  document.addEventListener(
+    "click",
+    function (event) {
+      if (!panel) return;
+      var target = event.target && event.target.closest ? event.target.closest("a, button") : null;
+      if (!target || target.closest("[" + MARK + "]")) return;
+      if (target.closest("#sidebar")) closeDocuments();
+    },
+    true
+  );
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") closeDocuments();
+  });
+  window.addEventListener("popstate", closeDocuments);
+  // The sidebar opened or closed: follow its edge.
+  setInterval(place, 400);
 
   // ---------------------------------------------------------------------
   // The menu item: a copy of "Workspace", placed right after it
@@ -136,6 +201,7 @@
         }
       }
       link.addEventListener("click", openDocuments);
+      if (panel) link.style.background = "rgba(127, 127, 127, 0.14)";
       row.parentElement.insertBefore(copy, row.nextSibling);
     }
   }
